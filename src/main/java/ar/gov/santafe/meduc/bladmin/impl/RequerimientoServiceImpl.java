@@ -21,7 +21,7 @@ public class RequerimientoServiceImpl implements RequerimientoService {
 
     @Override
     public List<SimpleDto> all() {
-        Query query = entityManager.createNativeQuery("select ID_MA_REQUERIMIENTO,titulo from AD_MA_REQUERIMIENTO where rownum < 50");
+        Query query = entityManager.createNativeQuery("select * from (select ID_MA_REQUERIMIENTO,titulo from AD_MA_REQUERIMIENTO order by ID_MA_REQUERIMIENTO desc ) where rownum < 50");
         List<Object[]> lista = query.getResultList();
         List resultList = new ArrayList();
         for (Object[] aRow : lista) {

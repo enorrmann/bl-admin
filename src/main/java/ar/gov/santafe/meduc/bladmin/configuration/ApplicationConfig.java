@@ -15,7 +15,7 @@ public class ApplicationConfig extends Application {
 
         resources.add(CustomJsonProvider.class);
         addRestResourceClasses(resources);
-        resources.add(ar.gov.santafe.meduc.bladmin.impl.ReglaServiceImpl.class);
+        resources.add(ar.gov.santafe.meduc.bladmin.impl.CondicionServiceImpl.class);
         resources.add(ar.gov.santafe.meduc.bladmin.impl.CasoDeUsoServiceImpl.class);
         resources.add(ar.gov.santafe.meduc.bladmin.impl.RequerimientoServiceImpl.class);
         resources.add(ar.gov.santafe.meduc.bladmin.impl.TicketServiceImpl.class);

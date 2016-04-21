@@ -1,13 +1,16 @@
 package ar.gov.santafe.meduc.bladmin.impl;
 
+import ar.gov.santafe.meduc.bladmin.configuration.ApplicationConfig;
+import ar.gov.santafe.meduc.bladmin.util.DbHelper;
 import ar.gov.santafe.meduc.dto.SimpleDto;
+import ar.gov.santafe.meduc.interfaces.CasoDeUsoService;
 import ar.gov.santafe.meduc.interfaces.RequerimientoService;
+import static ar.gov.santafe.meduc.serviceLocator.ServiceLocator.getService;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Resource;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.sql.DataSource;
 
 /**
  *
@@ -16,44 +19,44 @@ import javax.persistence.Query;
 @Stateless
 public class RequerimientoServiceImpl implements RequerimientoService {
 
-    @PersistenceContext(unitName = "SigaeEJBPU")
-    private EntityManager entityManager;
+    CasoDeUsoService cduDao = getService(CasoDeUsoService.class, ApplicationConfig.realUrl);
+    RequerimientoService rsDao = getService(RequerimientoService.class, ApplicationConfig.fakelogicUrl);
+    @Resource(name = "jdbc/bladmin")
+    private DataSource dataSource;
 
     @Override
     public List<SimpleDto> all() {
-        Query query = entityManager.createNativeQuery("select * from (select ID_MA_REQUERIMIENTO,titulo from AD_MA_REQUERIMIENTO order by ID_MA_REQUERIMIENTO desc ) where rownum < 50");
-        List<Object[]> lista = query.getResultList();
-        List resultList = new ArrayList();
-        for (Object[] aRow : lista) {
-            SimpleDto aDto = new SimpleDto()
-                    .add("id", aRow[0])
-                    .add("titulo", aRow[1]);
-            resultList.add(aDto);
-        }
-        return resultList;
+        List<SimpleDto> fakes = rsDao.all();
+        String query = "select * from (select ID_MA_REQUERIMIENTO as id, titulo from AD_MA_REQUERIMIENTO order by ID_MA_REQUERIMIENTO desc ) where rownum < 50";
+        DbHelper db = new DbHelper(dataSource);
+        List<SimpleDto> resultList = db.select(query);
+        fakes.addAll(resultList);
+        return fakes;
     }
 
     @Override
     public SimpleDto findById(String id) {
-        Query query = entityManager.createNativeQuery("select ID_MA_REQUERIMIENTO,titulo, descripcion from AD_MA_REQUERIMIENTO where ID_MA_REQUERIMIENTO = :P_ID_MA_REQUERIMIENTO");
-        query.setParameter("P_ID_MA_REQUERIMIENTO", Long.valueOf(id));
-        List<Object[]> lista = query.getResultList();
-        Object[] aRow = lista.get(0);
-            SimpleDto aDto = new SimpleDto()
-                    .add("id", aRow[0])
-                    .add("titulo", aRow[1])
-                    .add("descripcion", aRow[2]);
-        return aDto;
+        Long idLong = Long.valueOf(id);
+        String query = "select ID_MA_REQUERIMIENTO as id,titulo, descripcion from AD_MA_REQUERIMIENTO where ID_MA_REQUERIMIENTO = ?";
+        DbHelper db = new DbHelper(dataSource);
+        SimpleDto simpleDto = db.selectById(query, idLong);
+        simpleDto.add("casosDeUso", getCasoList(id));
+        return simpleDto;
     }
 
     @Override
     public SimpleDto create(SimpleDto simpleDto) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return rsDao.create(simpleDto);
     }
 
     @Override
     public SimpleDto update(String id, SimpleDto simpleDto) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            SimpleDto fakeDao = rsDao.findById(id);
+            return rsDao.update(id, simpleDto);
+        } catch (Exception e) {
+            return rsDao.create(simpleDto);
+        }
     }
 
     @Override
@@ -61,4 +64,14 @@ public class RequerimientoServiceImpl implements RequerimientoService {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    private List getCasoList(Object idRequerimiento) {
+        SimpleDto filtro = new SimpleDto().add("id", idRequerimiento);
+        List<SimpleDto> casos = cduDao.searchBy(filtro);
+        List casoList = new ArrayList();
+        for (SimpleDto unCaso : casos) {
+            casoList.add(unCaso.get("id"));
+
+        }
+        return casoList;
+    }
 }

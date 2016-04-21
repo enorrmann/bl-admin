@@ -1,50 +1,39 @@
 package ar.gov.santafe.meduc.bladmin.impl;
 
+import ar.gov.santafe.meduc.bladmin.util.DbHelper;
 import ar.gov.santafe.meduc.dto.SimpleDto;
 import ar.gov.santafe.meduc.interfaces.TicketService;
-import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Resource;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.sql.DataSource;
 
 /**
  *
  * @author enorrmann
  */
 @Stateless
-public class TicketServiceImpl implements TicketService{
+public class TicketServiceImpl implements TicketService {
 
-    @PersistenceContext(unitName = "SigaeEJBPU")
-    private EntityManager entityManager;
+    @Resource(name = "jdbc/bladmin")
+    private DataSource dataSource;
 
     @Override
     public List<SimpleDto> all() {
-        Query query = entityManager.createNativeQuery("select ID_TICKET,titulo from AD_MA_TICKET where rownum < 50");
-        List<Object[]> lista = query.getResultList();
-        List resultList = new ArrayList();
-        for (Object[] aRow : lista) {
-            SimpleDto aDto = new SimpleDto()
-                    .add("id", aRow[0])
-                    .add("titulo", aRow[1]);
-            resultList.add(aDto);
-        }
+        String query = "select * from ( select ID_TICKET as id, titulo from AD_MA_TICKET  order by ID_TICKET desc ) where rownum < 50";
+        DbHelper db = new DbHelper(dataSource);
+        List<SimpleDto> resultList = db.select(query);
         return resultList;
     }
 
     @Override
     public SimpleDto findById(String id) {
-        Query query = entityManager.createNativeQuery("select ID_TICKET,titulo,consulta,respuesta from AD_MA_TICKET where ID_TICKET = :P_ID_TICKET");
-        query.setParameter("P_ID_TICKET", Long.valueOf(id));
-        List<Object[]> lista = query.getResultList();
-        Object[] aRow = lista.get(0);
-            SimpleDto aDto = new SimpleDto()
-                    .add("id", aRow[0])
-                    .add("titulo", aRow[1])
-                    .add("consulta", aRow[2])
-                    .add("respuesta", aRow[3]);
-        return aDto;
+        String query = "select ID_TICKET as id,titulo,consulta,respuesta from AD_MA_TICKET where ID_TICKET = ?";
+        DbHelper db = new DbHelper(dataSource);
+        Long idLong = Long.valueOf(id);
+
+        SimpleDto simpleDto = db.selectById(query, idLong);
+        return simpleDto;
     }
 
     @Override

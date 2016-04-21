@@ -5,6 +5,9 @@ import ar.gov.santafe.meduc.dto.SimpleDto;
 import ar.gov.santafe.meduc.interfaces.CondicionService;
 import static ar.gov.santafe.meduc.serviceLocator.ServiceLocator.getService;
 import java.util.List;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
 
 /**
  *
@@ -14,8 +17,18 @@ public class CondicionServiceImpl implements CondicionService {
 
     CondicionService rsDao = getService(CondicionService.class, ApplicationConfig.fakelogicUrl);
 
+    @Context
+    UriInfo uriInfo;
+
     @Override
     public List<SimpleDto> all() {
+        MultivaluedMap<String, String> params = uriInfo.getQueryParameters();
+        if (params != null && !params.isEmpty()) {
+            if (params.get("_filters")!=null){
+                String value = params.get("_filters").get(0);
+            SimpleDto filtros = new SimpleDto(value);
+            }
+        }
         return rsDao.all();
     }
 

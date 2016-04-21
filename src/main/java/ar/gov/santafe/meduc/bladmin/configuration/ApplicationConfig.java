@@ -8,6 +8,7 @@ import javax.ws.rs.core.Application;
 public class ApplicationConfig extends Application {
 
     public static final String fakelogicUrl = "http://localhost:3000/";
+    public static final String realUrl = "http://localhost:8080/bl-admin/api/";
 
     @Override
     public Set<Class<?>> getClasses() {
@@ -19,6 +20,7 @@ public class ApplicationConfig extends Application {
         resources.add(ar.gov.santafe.meduc.bladmin.impl.CasoDeUsoServiceImpl.class);
         resources.add(ar.gov.santafe.meduc.bladmin.impl.RequerimientoServiceImpl.class);
         resources.add(ar.gov.santafe.meduc.bladmin.impl.TicketServiceImpl.class);
+        resources.add(ar.gov.santafe.meduc.bladmin.impl.TemaServiceImpl.class);
         
         return resources;
     }

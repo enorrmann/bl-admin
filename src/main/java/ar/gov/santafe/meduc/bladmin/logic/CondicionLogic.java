@@ -3,9 +3,9 @@ package ar.gov.santafe.meduc.bladmin.logic;
 import ar.gov.santafe.meduc.bladmin.dao.CondicionDao;
 import ar.gov.santafe.meduc.dto.SimpleDto;
 import ar.gov.santafe.simpledb.SimpleDbAccess;
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import org.skife.jdbi.v2.Handle;
 
 /**
  *
@@ -16,19 +16,16 @@ public class CondicionLogic {
     @Inject
     private SimpleDbAccess db;
 
-    final String condicionTable = "BL_CONDICION";
-    final String condicionDependeTable = "BL_CONDICION_DEPENDE";
-
     public CondicionLogic() {
 
     }
 
     public SimpleDto update(SimpleDto simpleDto) {
-        Long idCondicion = simpleDto.getLong("id");
+        Long idCondicion = simpleDto.getLong("id_condicion");
         List<Long> idCondicionDepende = simpleDto.getLongList("depende_de");
-        simpleDto.remove("depende_de");
         updateDependencias(idCondicion, idCondicionDepende);
-        return db.update(simpleDto, condicionTable);
+        db.update(simpleDto,CondicionDao.TABLE_NAME);
+        return simpleDto;
     }
 
     public List<SimpleDto> listAll() {
@@ -63,10 +60,6 @@ public class CondicionLogic {
         return simpleDto;
     }
 
-    public SimpleDto update(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     private void updateDependencias(Long idCondicion, List<Long> idCondicionDepende) {
         CondicionDao cd = db.getDao(CondicionDao.class);
         cd.deleteDependencias(idCondicion);
@@ -77,6 +70,29 @@ public class CondicionLogic {
         CondicionDao cd = db.getDao(CondicionDao.class);
         cd.deleteDependencias(idCondicion);
         cd.deleteCondicion(idCondicion);
+    }
+
+    public List<SimpleDto> search(SimpleDto filterDto) {
+        List<SimpleDto> resultList = new ArrayList<>();
+        Long perPage = filterDto.getLong("perPage");
+        if (perPage!=null&&perPage.equals(0L)) {
+            return resultList;
+        }
+        CondicionDao dao = db.getDao(CondicionDao.class);
+        List<Long> ids = filterDto.getLongList("ids");
+        if (ids != null && !ids.isEmpty()) {
+            return dao.findByIdIn(ids);
+        }
+        Long idCondicion = filterDto.getLong("id_condicion");
+        if (idCondicion != null) {
+            SimpleDto dto = dao.findById(idCondicion);
+            if (dto == null) {
+                return resultList;
+            }
+            resultList.add(dto);
+            return resultList;
+        }
+        return listAll();
     }
 
 }

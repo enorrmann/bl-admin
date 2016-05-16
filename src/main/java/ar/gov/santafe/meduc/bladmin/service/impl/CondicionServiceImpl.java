@@ -7,6 +7,8 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
 
 /**
  *
@@ -16,12 +18,23 @@ import javax.inject.Named;
 @Stateless
 public class CondicionServiceImpl implements CondicionService {
 
+    @Context
+    private UriInfo uriInfo;
+
     @Inject
     private CondicionLogic logic;
 
     @Override
     public List<SimpleDto> all() {
-        return logic.listAll();
+        String filters = uriInfo.getQueryParameters().getFirst("_filters");
+        String perPage = uriInfo.getQueryParameters().getFirst("_perPage");
+        SimpleDto filterDto = null;
+        if (filters != null) {
+            filterDto = new SimpleDto(filters);
+        } else {
+            filterDto = new SimpleDto().add("perPage", perPage);
+        }
+            return logic.search(filterDto);
     }
 
     @Override

@@ -3,10 +3,11 @@ package ar.gov.santafe.meduc.bladmin.service.impl;
 import ar.gov.santafe.meduc.bladmin.logic.RequerimientoLogic;
 import ar.gov.santafe.meduc.dto.SimpleDto;
 import ar.gov.santafe.meduc.interfaces.RequerimientoService;
-import ar.gov.santafe.simpledb.SimpleDbAccess;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
 
 /**
  *
@@ -15,11 +16,19 @@ import javax.inject.Inject;
 @Stateless
 public class RequerimientoServiceImpl implements RequerimientoService {
 
+    @Context
+    private UriInfo uriInfo;
+
     @Inject
     private RequerimientoLogic logic;
 
     @Override
     public List<SimpleDto> all() {
+        String filters = uriInfo.getQueryParameters().getFirst("_filters");
+        if (filters != null) {
+            SimpleDto filterDto = new SimpleDto(filters);
+            return logic.search(filterDto);
+        }
         return logic.listAll();
     }
 
@@ -35,7 +44,7 @@ public class RequerimientoServiceImpl implements RequerimientoService {
 
     @Override
     public SimpleDto update(String id, SimpleDto simpleDto) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return logic.update(simpleDto);
     }
 
     @Override

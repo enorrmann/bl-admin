@@ -1,5 +1,6 @@
 package ar.gov.santafe.meduc.bladmin.configuration;
 
+import ar.gov.santafe.meduc.bladmin.service.impl.TipoDocumentoServiceImpl;
 import ar.gov.santafe.meduc.serviceLocator.CustomJsonProvider;
 import java.util.Set;
 import javax.ws.rs.core.Application;
@@ -17,7 +18,8 @@ public class ApplicationConfig extends Application {
         resources.add(CustomJsonProvider.class);
         addRestResourceClasses(resources);
         resources.add(ar.gov.santafe.meduc.bladmin.service.impl.CondicionServiceImpl.class);
-        resources.add(ar.gov.santafe.meduc.bladmin.service.impl.CasoDeUsoServiceImpl.class);
+        resources.add(ar.gov.santafe.meduc.bladmin.service.impl.DocumentoServiceImpl.class);
+        resources.add(ar.gov.santafe.meduc.bladmin.service.impl.TipoDocumentoServiceImpl.class);
         resources.add(ar.gov.santafe.meduc.bladmin.service.impl.RequerimientoServiceImpl.class);
         resources.add(ar.gov.santafe.meduc.bladmin.service.impl.TicketServiceImpl.class);
         resources.add(ar.gov.santafe.meduc.bladmin.service.impl.TemaServiceImpl.class);

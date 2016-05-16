@@ -31,4 +31,26 @@ public class TemaLogic {
         return dto;
     }
 
+    public SimpleDto insert(SimpleDto simpleDto) {
+        TemaDao dao = db.getDao(TemaDao.class);
+        Long id = dao.getNewId();
+        simpleDto.add("id_tema", id);
+        dao.insert(simpleDto);
+        return simpleDto;
+    }
+
+    public void delete(Long id) {
+        TemaDao dao = db.getDao(TemaDao.class);
+        dao.delete(id);
+    }
+
+    public SimpleDto update(SimpleDto simpleDto) {
+        return db.update(simpleDto, TemaDao.TABLE_NAME);
+    }
+
+    public List<SimpleDto> findByIdIn(String id) {
+        TemaDao dao = db.getDao(TemaDao.class);
+        return dao.findByIdIn(id);
+    }
+
 }

@@ -17,6 +17,8 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 @RegisterMapper(SimpleDtoMapper.class)
 public interface CondicionDao {
 
+    final String TABLE_NAME = "BL_CONDICION";
+
     @SqlQuery("SELECT ID_CONDICION_DEPENDE FROM BL_CONDICION_DEPENDE WHERE ID_CONDICION =:ID_CONDICION")
     List<String> getDependencias(@Bind("ID_CONDICION") Long idCondicon);
 
@@ -29,15 +31,22 @@ public interface CondicionDao {
     @SqlUpdate("DELETE FROM BL_CONDICION_DEPENDE WHERE ID_CONDICION = :idCondicion")
     void deleteDependencias(@Bind("idCondicion") Long idCondicion);
 
-    @SqlUpdate("insert into BL_CONDICION (ID_CONDICION, nombre, descripcion,implementacion) values (:id_condicion, :nombre, :descripcion, :implementacion)")
+    @SqlUpdate("insert into BL_CONDICION (ID_CONDICION, nombre, descripcion,implementacion) values (:id, :nombre, :descripcion, :implementacion)")
     public void insert(@BindSimpleDto SimpleDto s);
 
     @SqlUpdate("DELETE FROM BL_CONDICION WHERE ID_CONDICION = :idCondicion")
     void deleteCondicion(@Bind("idCondicion") Long idCondicion);
 
-    @SqlQuery("select ID_CONDICION as id,NOMBRE, DESCRIPCION from BL_CONDICION")
+    @SqlQuery("select ID_CONDICION ,NOMBRE, DESCRIPCION from BL_CONDICION")
     public List<SimpleDto> all();
 
-    @SqlQuery("select ID_CONDICION as id,NOMBRE, DESCRIPCION from BL_CONDICION where ID_CONDICION = :idCondicion")
+    @SqlQuery("select ID_CONDICION ,NOMBRE, DESCRIPCION, implementacion from BL_CONDICION where ID_CONDICION = :idCondicion")
     public SimpleDto findById(@Bind("idCondicion")Long idCondicion);
+
+    @SqlQuery("select ID_CONDICION ,NOMBRE, DESCRIPCION from BL_CONDICION where ID_CONDICION in (:idCondicionList)")
+    public List<SimpleDto> findByIdIn(@Bind("idCondicionList")List<Long> idCondicionList);
+    
+    @SqlUpdate("update " + TABLE_NAME + " set NOMBRE = :nombre, DESCRIPCION = :descripcion, implementacion = :implementacion where ID_CONDICION = :id")
+    public void update(@BindSimpleDto SimpleDto s);
+
 }

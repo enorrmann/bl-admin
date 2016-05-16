@@ -2,8 +2,8 @@ package ar.gov.santafe.meduc.bladmin.service.impl;
 
 import ar.gov.santafe.meduc.bladmin.logic.TemaLogic;
 import ar.gov.santafe.meduc.dto.SimpleDto;
+import ar.gov.santafe.meduc.dto.SimpleDtoUtils;
 import ar.gov.santafe.meduc.interfaces.TemaService;
-import ar.gov.santafe.simpledb.SimpleDbAccess;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -22,14 +22,12 @@ public class TemaServiceImpl implements TemaService {
 
     @Override
     public SimpleDto create(SimpleDto simpleDto) {
-        //logic.insert(simpleDto);
-        return simpleDto;
+        return logic.insert(simpleDto);
     }
 
     @Override
     public SimpleDto update(String id, SimpleDto simpleDto) {
-        //return logic.update(simpleDto);
-        return simpleDto;
+        return logic.update(simpleDto);
     }
 
     @Override
@@ -44,7 +42,8 @@ public class TemaServiceImpl implements TemaService {
 
     @Override
     public SimpleDto delete(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        logic.delete(Long.valueOf(id));
+        return new SimpleDto();
     }
 
 }

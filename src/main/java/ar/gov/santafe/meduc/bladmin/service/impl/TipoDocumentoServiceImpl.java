@@ -1,13 +1,16 @@
 package ar.gov.santafe.meduc.bladmin.service.impl;
 
-import ar.gov.santafe.meduc.bladmin.logic.CasoDeUsoLogic;
+import ar.gov.santafe.meduc.bladmin.logic.DocumentoLogic;
+import ar.gov.santafe.meduc.bladmin.logic.TipoDocumentoLogic;
 import ar.gov.santafe.meduc.dto.SimpleDto;
-import ar.gov.santafe.meduc.interfaces.CasoDeUsoService;
-import ar.gov.santafe.simpledb.SimpleDbAccess;
+import ar.gov.santafe.meduc.interfaces.TipoDocumentoService;
+
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.inject.Inject;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
 
 /**
  *
@@ -15,10 +18,13 @@ import javax.inject.Inject;
  */
 @Named
 @Stateless
-public class CasoDeUsoServiceImpl implements CasoDeUsoService {
+public class TipoDocumentoServiceImpl implements TipoDocumentoService {
 
     @Inject
-    private CasoDeUsoLogic logic;
+    private TipoDocumentoLogic logic;
+
+    @Context
+    private UriInfo uriInfo;
 
     @Override
     public List<SimpleDto> searchBy(SimpleDto filter) {
@@ -27,7 +33,7 @@ public class CasoDeUsoServiceImpl implements CasoDeUsoService {
 
     @Override
     public List<SimpleDto> all() {
-        return logic.listAll();
+        return logic.search(getFilters());
     }
 
     @Override
@@ -47,7 +53,16 @@ public class CasoDeUsoServiceImpl implements CasoDeUsoService {
 
     @Override
     public SimpleDto delete(String id) {
-        return logic.delete(Long.valueOf(id));
+        logic.delete(Long.valueOf(id));
+        return null;
+    }
+
+    private SimpleDto getFilters() {
+        String filters = uriInfo.getQueryParameters().getFirst("_filters");
+        if (filters != null) {
+            return new SimpleDto(filters);
+        } 
+        return new SimpleDto();
     }
 
 }

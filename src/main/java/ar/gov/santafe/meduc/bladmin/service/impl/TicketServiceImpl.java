@@ -1,5 +1,6 @@
 package ar.gov.santafe.meduc.bladmin.service.impl;
 
+import ar.gov.santafe.meduc.bladmin.dao.TicketDao;
 import ar.gov.santafe.meduc.dto.SimpleDto;
 import ar.gov.santafe.meduc.interfaces.TicketService;
 import ar.gov.santafe.simpledb.SimpleDbAccess;
@@ -17,16 +18,17 @@ public class TicketServiceImpl implements TicketService {
     @Inject
     private SimpleDbAccess db;
 
+    @Inject
+    private TicketDao dao;
+
     @Override
     public List<SimpleDto> all() {
-        String query = "select * from ( select ID_TICKET as id, titulo from AD_MA_TICKET  order by ID_TICKET desc ) where rownum < 50";
-        List<SimpleDto> resultList = db.select(query);
-        return resultList;
+        return dao.all();
     }
 
     @Override
     public SimpleDto findById(String id) {
-        return db.findById(id, "AD_MA_TICKET");
+        return dao.findById(Long.valueOf(id));
     }
 
     @Override

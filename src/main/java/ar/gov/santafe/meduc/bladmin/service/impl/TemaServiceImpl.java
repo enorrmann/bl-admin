@@ -2,7 +2,6 @@ package ar.gov.santafe.meduc.bladmin.service.impl;
 
 import ar.gov.santafe.meduc.bladmin.logic.TemaLogic;
 import ar.gov.santafe.meduc.dto.SimpleDto;
-import ar.gov.santafe.meduc.dto.SimpleDtoUtils;
 import ar.gov.santafe.meduc.interfaces.TemaService;
 import java.util.List;
 import javax.ejb.Stateless;

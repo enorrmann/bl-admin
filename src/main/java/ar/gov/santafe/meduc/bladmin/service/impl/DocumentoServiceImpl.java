@@ -1,5 +1,6 @@
 package ar.gov.santafe.meduc.bladmin.service.impl;
 
+import ar.gov.santafe.meduc.bladmin.configuration.WebLayer;
 import ar.gov.santafe.meduc.bladmin.logic.DocumentoLogic;
 import ar.gov.santafe.meduc.dto.SimpleDto;
 import ar.gov.santafe.meduc.interfaces.DocumentoService;
@@ -8,8 +9,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.inject.Inject;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 /**
  *
@@ -21,18 +20,14 @@ public class DocumentoServiceImpl implements DocumentoService {
 
     @Inject
     private DocumentoLogic logic;
-
-    @Context
-    private UriInfo uriInfo;
-
-    @Override
-    public List<SimpleDto> searchBy(SimpleDto filter) {
-        return logic.search(filter);
-    }
+    
+    @Inject
+    private WebLayer web;
 
     @Override
     public List<SimpleDto> all() {
-        return logic.search(getFilters());
+        List<SimpleDto> result = logic.search(web.getQueryParams());
+        return web.paginate(result);
     }
 
     @Override
@@ -55,13 +50,4 @@ public class DocumentoServiceImpl implements DocumentoService {
         logic.delete(Long.valueOf(id));
         return null;
     }
-
-    private SimpleDto getFilters() {
-        String filters = uriInfo.getQueryParameters().getFirst("_filters");
-        if (filters != null) {
-            return new SimpleDto(filters);
-        } 
-        return new SimpleDto();
-    }
-
 }

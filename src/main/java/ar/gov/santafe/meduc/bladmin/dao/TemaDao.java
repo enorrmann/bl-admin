@@ -1,8 +1,8 @@
 package ar.gov.santafe.meduc.bladmin.dao;
 
-import ar.gov.santafe.meduc.bladmin.dao.config.BindSimpleDto;
-import ar.gov.santafe.meduc.bladmin.dao.config.SimpleDtoMapper;
+import ar.gov.santafe.simpledb.BindSimpleDto;
 import ar.gov.santafe.meduc.dto.SimpleDto;
+import ar.gov.santafe.simpledb.SimpleDtoMapper;
 import java.util.List;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -25,7 +25,7 @@ public interface TemaDao {
     public SimpleDto findById(@Bind("id") Long id);
 
     @SqlQuery("SELECT SEQ_" + TABLE_NAME + ".nextval FROM DUAL")
-    Long getNewId();
+    public Long getNewId();
 
     @SqlUpdate("insert into " + TABLE_NAME + " (ID_tema, nombre, ID_tema_padre) values (:id_tema, :nombre, :id_tema_padre)")
     public void insert(@BindSimpleDto SimpleDto s);

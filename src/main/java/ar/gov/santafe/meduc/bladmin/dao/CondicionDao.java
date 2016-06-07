@@ -1,8 +1,8 @@
 package ar.gov.santafe.meduc.bladmin.dao;
 
-import ar.gov.santafe.meduc.bladmin.dao.config.BindSimpleDto;
-import ar.gov.santafe.meduc.bladmin.dao.config.SimpleDtoMapper;
+import ar.gov.santafe.simpledb.BindSimpleDto;
 import ar.gov.santafe.meduc.dto.SimpleDto;
+import ar.gov.santafe.simpledb.SimpleDtoMapper;
 import java.util.List;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlBatch;

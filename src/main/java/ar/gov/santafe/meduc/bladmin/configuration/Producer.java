@@ -16,4 +16,5 @@ public class Producer {
     public SimpleDbAccess getSimpleDb() {
         return new SimpleDbAccess(dataSource);
     }
+
 }

@@ -15,33 +15,30 @@ public class TemaLogic {
     @Inject
     private SimpleDbAccess db;
 
+    @Inject
+    private TemaDao temaDao;
+
     public TemaLogic() {
 
     }
 
     public List<SimpleDto> listAll() {
-        TemaDao dao = db.getDao(TemaDao.class);
-        List<SimpleDto> all = dao.all();
-        return all;
+        return temaDao.all();
     }
 
     public SimpleDto findById(Long id) {
-        TemaDao dao = db.getDao(TemaDao.class);
-        SimpleDto dto = dao.findById(id);
-        return dto;
+        return temaDao.findById(id);
     }
 
     public SimpleDto insert(SimpleDto simpleDto) {
-        TemaDao dao = db.getDao(TemaDao.class);
-        Long id = dao.getNewId();
+        Long id = temaDao.getNewId();
         simpleDto.add("id_tema", id);
-        dao.insert(simpleDto);
+        temaDao.insert(simpleDto);
         return simpleDto;
     }
 
     public void delete(Long id) {
-        TemaDao dao = db.getDao(TemaDao.class);
-        dao.delete(id);
+        temaDao.delete(id);
     }
 
     public SimpleDto update(SimpleDto simpleDto) {
@@ -49,8 +46,7 @@ public class TemaLogic {
     }
 
     public List<SimpleDto> findByIdIn(String id) {
-        TemaDao dao = db.getDao(TemaDao.class);
-        return dao.findByIdIn(id);
+        return temaDao.findByIdIn(id);
     }
 
 }
